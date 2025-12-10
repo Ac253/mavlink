@@ -5259,26 +5259,17 @@
     </enum>
   </enums>
   <messages>
-    <!-- <message id="1" name="SYS_STATUS">
-      <description>The general system state. If the system is following the MAVLink standard, the system state is mainly defined by three orthogonal states/modes: The system mode, which is either LOCKED (motors shut down and locked), MANUAL (system under RC control), GUIDED (system with autonomous position control, position setpoint controlled manually) or AUTO (system guided by path/waypoint planner). The NAV_MODE defined the current flight state: LIFTOFF (often an open-loop maneuver), LANDING, WAYPOINTS or VECTOR. This represents the internal navigation state machine. The system status shows whether the system is currently active or not and if an emergency occurred. During the CRITICAL and EMERGENCY states the MAV is still considered to be active, but should start emergency procedures autonomously. After a failure occurred it should first move from active to critical to allow manual intervention and then move to emergency after a certain timeout.</description>
-      <field type="uint32_t" name="onboard_control_sensors_present" enum="MAV_SYS_STATUS_SENSOR" print_format="0x%04x">Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.</field>
-      <field type="uint32_t" name="onboard_control_sensors_enabled" enum="MAV_SYS_STATUS_SENSOR" print_format="0x%04x">Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.</field>
-      <field type="uint32_t" name="onboard_control_sensors_health" enum="MAV_SYS_STATUS_SENSOR" print_format="0x%04x">Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.</field>
-      <field type="uint16_t" name="load" units="d%">Maximum usage in percent of the mainloop time. Values: [0-1000] - should always be below 1000</field>
-      <field type="uint16_t" name="voltage_battery" units="mV" invalid="UINT16_MAX">Battery voltage, UINT16_MAX: Voltage not sent by autopilot</field>
-      <field type="int16_t" name="current_battery" units="cA" invalid="-1">Battery current, -1: Current not sent by autopilot</field>
-      <field type="int8_t" name="battery_remaining" units="%" invalid="-1">Battery energy remaining, -1: Battery remaining energy not sent by autopilot</field>
-      <field type="uint16_t" name="drop_rate_comm" units="c%">Communication drop rate, (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)</field>
-      <field type="uint16_t" name="errors_comm">Communication errors (UART, I2C, SPI, CAN), dropped packets on all links (packets that were corrupted on reception on the MAV)</field>
-      <field type="uint16_t" name="errors_count1">Autopilot-specific errors</field>
-      <field type="uint16_t" name="errors_count2">Autopilot-specific errors</field>
-      <field type="uint16_t" name="errors_count3">Autopilot-specific errors</field>
-      <field type="uint16_t" name="errors_count4">Autopilot-specific errors</field>
-      <extensions/>
-      <field type="uint32_t" name="onboard_control_sensors_present_extended" enum="MAV_SYS_STATUS_SENSOR_EXTENDED" print_format="0x%04x">Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.</field>
-      <field type="uint32_t" name="onboard_control_sensors_enabled_extended" enum="MAV_SYS_STATUS_SENSOR_EXTENDED" print_format="0x%04x">Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.</field>
-      <field type="uint32_t" name="onboard_control_sensors_health_extended" enum="MAV_SYS_STATUS_SENSOR_EXTENDED" print_format="0x%04x">Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.</field>
-    </message> -->
+    <!-- 重新定义 SYS_STATUS 消息,只保留 5 个字段 -->
+    <message id="1" name="SYS_STATUS">
+      <description>Simplified system status with only timestamp and sensor bitmaps for PX4</description>
+
+      <!-- 只保留 5 个字段 -->
+      <field type="uint64_t" name="time_unix_usec" units="us">Unix timestamp (microseconds since UNIX epoch)</field>
+      <field type="uint32_t" name="time_boot_ms" units="ms">Timestamp (milliseconds since system boot)</field>
+      <field type="uint32_t" name="onboard_control_sensors_present" enum="MAV_SYS_STATUS_SENSOR" display="bitmask" print_format="0x%08x">Bitmap showing which onboard controllers and sensors are present. Value of 0: not present. Value of 1: present.</field>
+      <field type="uint32_t" name="onboard_control_sensors_enabled" enum="MAV_SYS_STATUS_SENSOR" display="bitmask" print_format="0x%08x">Bitmap showing which onboard controllers and sensors are enabled:  Value of 0: not enabled. Value of 1: enabled.</field>
+      <field type="uint32_t" name="onboard_control_sensors_health" enum="MAV_SYS_STATUS_SENSOR" display="bitmask" print_format="0x%08x">Bitmap showing which onboard controllers and sensors have an error (or are operational). Value of 0: error. Value of 1: healthy.</field>
+    </message>
     <message id="2" name="SYSTEM_TIME">
       <description>The system time is the time of the master clock.
         This can be emitted by flight controllers, onboard computers, or other components in the MAVLink network.
@@ -5349,15 +5340,14 @@
       <field type="uint8_t" name="target_system">System ID</field>
       <field type="uint8_t" name="target_component">Component ID</field>
     </message>
-    <!-- PARAM_VALUE消息已挪到px4_custom.xml中 -->
-    <!-- <message id="22" name="PARAM_VALUE">
+    <message id="22" name="PARAM_VALUE">
       <description>Emit the value of a onboard parameter. The inclusion of param_count and param_index in the message allows the recipient to keep track of received parameters and allows him to re-request missing parameters after a loss or timeout. The parameter microservice is documented at https://mavlink.io/en/services/parameter.html</description>
       <field type="char[16]" name="param_id">Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string</field>
       <field type="float" name="param_value">Onboard parameter value</field>
       <field type="uint8_t" name="param_type" enum="MAV_PARAM_TYPE">Onboard parameter type.</field>
       <field type="uint16_t" name="param_count">Total number of onboard parameters</field>
       <field type="uint16_t" name="param_index">Index of this onboard parameter</field>
-    </message> -->
+    </message>
     <message id="23" name="PARAM_SET">
       <description>Set a parameter value (write new value to permanent storage).
         The receiving component should acknowledge the new parameter value by broadcasting a PARAM_VALUE message (broadcasting ensures that multiple GCS all have an up-to-date list of all parameters). If the sending GCS did not receive a PARAM_VALUE within its timeout time, it should re-send the PARAM_SET message. The parameter microservice is documented at https://mavlink.io/en/services/parameter.html.
@@ -5368,27 +5358,21 @@
       <field type="float" name="param_value">Onboard parameter value</field>
       <field type="uint8_t" name="param_type" enum="MAV_PARAM_TYPE">Onboard parameter type.</field>
     </message>
-    <!-- <message id="24" name="GPS_RAW_INT">
-      <description>The global position, as returned by the Global Positioning System (GPS). This is
-                NOT the global position estimate of the system, but rather a RAW sensor value. See message GLOBAL_POSITION_INT for the global position estimate.</description>
-      <field type="uint64_t" name="time_usec" units="us">Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.</field>
-      <field type="uint8_t" name="fix_type" enum="GPS_FIX_TYPE">GPS fix type.</field>
+    <!-- 重新定义 GPS_RAW_INT 消息,只保留 9 个基础字段 -->
+    <message id="24" name="GPS_RAW_INT">
+      <description>Simplified GPS raw data with only essential fields for PX4</description>
+
+      <!-- 只保留 9 个基础字段 (无 vel) -->
+      <field type="uint64_t" name="time_usec" units="us">Timestamp (UNIX Epoch time or time since system boot)</field>
+      <field type="uint8_t" name="fix_type" enum="GPS_FIX_TYPE">GPS fix type</field>
       <field type="int32_t" name="lat" units="degE7">Latitude (WGS84, EGM96 ellipsoid)</field>
       <field type="int32_t" name="lon" units="degE7">Longitude (WGS84, EGM96 ellipsoid)</field>
-      <field type="int32_t" name="alt" units="mm">Altitude (MSL). Positive for up. Note that virtually all GPS modules provide the MSL altitude in addition to the WGS84 altitude.</field>
-      <field type="uint16_t" name="eph" invalid="UINT16_MAX" multiplier="1E-2">GPS HDOP horizontal dilution of position (unitless * 100). If unknown, set to: UINT16_MAX</field>
-      <field type="uint16_t" name="epv" invalid="UINT16_MAX" multiplier="1E-2">GPS VDOP vertical dilution of position (unitless * 100). If unknown, set to: UINT16_MAX</field>
-      <field type="uint16_t" name="vel" units="cm/s" invalid="UINT16_MAX">GPS ground speed. If unknown, set to: UINT16_MAX</field>
-      <field type="uint16_t" name="cog" units="cdeg" invalid="UINT16_MAX">Course over ground (NOT heading, but direction of movement) in degrees * 100, 0.0..359.99 degrees. If unknown, set to: UINT16_MAX</field>
-      <field type="uint8_t" name="satellites_visible" invalid="UINT8_MAX">Number of satellites visible. If unknown, set to UINT8_MAX</field>
-      <extensions/>
-      <field type="int32_t" name="alt_ellipsoid" units="mm">Altitude (above WGS84, EGM96 ellipsoid). Positive for up.</field>
-      <field type="uint32_t" name="h_acc" units="mm">Position uncertainty.</field>
-      <field type="uint32_t" name="v_acc" units="mm">Altitude uncertainty.</field>
-      <field type="uint32_t" name="vel_acc" units="mm/s">Speed uncertainty.</field>
-      <field type="uint32_t" name="hdg_acc" units="degE5">Heading / track uncertainty</field>
-      <field type="uint16_t" name="yaw" units="cdeg" invalid="0">Yaw in earth frame from north. Use 0 if this GPS does not provide yaw. Use UINT16_MAX if this GPS is configured to provide yaw and is currently unable to provide it. Use 36000 for north.</field>
-    </message> -->
+      <field type="int32_t" name="alt" units="mm">Altitude (MSL)</field>
+      <field type="uint16_t" name="eph" invalid="UINT16_MAX">GPS HDOP horizontal dilution of position (unitless * 100)</field>
+      <field type="uint16_t" name="epv" invalid="UINT16_MAX">GPS VDOP vertical dilution of position (unitless * 100)</field>
+      <field type="uint16_t" name="cog" units="cdeg" invalid="UINT16_MAX">Course over ground in degrees * 100</field>
+      <field type="uint8_t" name="satellites_visible" invalid="UINT8_MAX">Number of satellites visible</field>
+    </message>
     <message id="25" name="GPS_STATUS">
       <description>The positioning status, as reported by GPS. This message is intended to display status information about each satellite visible to the receiver. See message GLOBAL_POSITION_INT for the global position estimate. This message can contain information for up to 20 satellites.</description>
       <field type="uint8_t" name="satellites_visible">Number of satellites visible</field>
@@ -5398,24 +5382,28 @@
       <field type="uint8_t[20]" name="satellite_azimuth" units="deg" multiplier="360/255">Direction of satellite, 0: 0 deg, 255: 360 deg.</field>
       <field type="uint8_t[20]" name="satellite_snr" units="dB">Signal to noise ratio of satellite</field>
     </message>
-    <!-- SCALED_IMU 已在 px4_custom.xml 中重新定义,简化为 10 字段版本(移除 temperature) -->
-    <!--
+    <!-- 重新定义 SCALED_IMU 消息,移除 temperature 扩展字段 -->
     <message id="26" name="SCALED_IMU">
-      <description>The RAW IMU readings for the usual 9DOF sensor setup. This message should contain the scaled values to the described units</description>
-      <field type="uint32_t" name="time_boot_ms" units="ms">Timestamp (time since system boot).</field>
+      <description>Simplified SCALED IMU readings for 9DOF sensor for PX4. Contains scaled accelerometer, gyroscope and magnetometer readings without temperature.</description>
+
+      <!-- 时间戳 -->
+      <field type="uint32_t" name="time_boot_ms" units="ms">Timestamp (time since system boot)</field>
+
+      <!-- 加速度计 (已校准和缩放) -->
       <field type="int16_t" name="xacc" units="mG">X acceleration</field>
       <field type="int16_t" name="yacc" units="mG">Y acceleration</field>
       <field type="int16_t" name="zacc" units="mG">Z acceleration</field>
-      <field type="int16_t" name="xgyro" units="mrad/s">Angular speed around X axis</field>
-      <field type="int16_t" name="ygyro" units="mrad/s">Angular speed around Y axis</field>
-      <field type="int16_t" name="zgyro" units="mrad/s">Angular speed around Z axis</field>
-      <field type="int16_t" name="xmag" units="mgauss">X Magnetic field</field>
-      <field type="int16_t" name="ymag" units="mgauss">Y Magnetic field</field>
-      <field type="int16_t" name="zmag" units="mgauss">Z Magnetic field</field>
-      <extensions/>
-      <field type="int16_t" name="temperature" units="cdegC">Temperature, 0: IMU does not provide temperature values. If the IMU is at 0C it must send 1 (0.01C).</field>
+
+      <!-- 陀螺仪 (已校准和缩放) -->
+      <field type="int16_t" name="xgyro" units="mrad/s">X angular speed</field>
+      <field type="int16_t" name="ygyro" units="mrad/s">Y angular speed</field>
+      <field type="int16_t" name="zgyro" units="mrad/s">Z angular speed</field>
+
+      <!-- 磁力计 (已校准和缩放) -->
+      <field type="int16_t" name="xmag" units="mgauss">X magnetic field</field>
+      <field type="int16_t" name="ymag" units="mgauss">Y magnetic field</field>
+      <field type="int16_t" name="zmag" units="mgauss">Z magnetic field</field>
     </message>
-    -->
     <message id="27" name="RAW_IMU">
       <description>The RAW IMU readings for a 9DOF sensor, which is identified by the id (default IMU1). This message should always contain the true raw values without any scaling to allow data capture and system debugging.</description>
       <field type="uint64_t" name="time_usec" units="us">Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.</field>
@@ -5449,21 +5437,30 @@
       <extensions/>
       <field type="int16_t" name="temperature_press_diff" units="cdegC" invalid="0">Differential pressure temperature (0, if not available). Report values of 0 (or 1) as 1 cdegC.</field>
     </message>
-    <!-- ATTITUDE 已在 px4_custom.xml 中重新定义,合并了 ATTITUDE 和 ATTITUDE_QUATERNION 的字段 -->
-    <!--
+    <!-- 重新定义 ATTITUDE 消息,合并 ATTITUDE (30) 和 ATTITUDE_QUATERNION (31) 的所有字段 -->
     <message id="30" name="ATTITUDE">
-      <description>The attitude in the aeronautical frame (right-handed, Z-down, Y-right, X-front, ZYX, intrinsic).</description>
-      <field type="uint32_t" name="time_boot_ms" units="ms">Timestamp (time since system boot).</field>
+      <description>Combined attitude message integrating fields from ATTITUDE (30) and ATTITUDE_QUATERNION (31) for PX4. Includes both Euler angles and quaternion representation.</description>
+
+      <!-- 来自原始 ATTITUDE (30) 的字段 -->
+      <field type="uint32_t" name="time_boot_ms" units="ms">Timestamp (time since system boot)</field>
       <field type="float" name="roll" units="rad">Roll angle (-pi..+pi)</field>
       <field type="float" name="pitch" units="rad">Pitch angle (-pi..+pi)</field>
       <field type="float" name="yaw" units="rad">Yaw angle (-pi..+pi)</field>
       <field type="float" name="rollspeed" units="rad/s">Roll angular speed</field>
       <field type="float" name="pitchspeed" units="rad/s">Pitch angular speed</field>
       <field type="float" name="yawspeed" units="rad/s">Yaw angular speed</field>
+
+      <!-- 来自 ATTITUDE_QUATERNION (31) 的四元数字段 -->
+      <field type="float" name="q1">Quaternion component 1, w (1 in null-rotation)</field>
+      <field type="float" name="q2">Quaternion component 2, x (0 in null-rotation)</field>
+      <field type="float" name="q3">Quaternion component 3, y (0 in null-rotation)</field>
+      <field type="float" name="q4">Quaternion component 4, z (0 in null-rotation)</field>
+
+      <!-- 来自 ATTITUDE_QUATERNION (31) 的旋转偏移四元数 -->
+      <field type="float[4]" name="repr_offset_q" invalid="[0]">Rotation offset quaternion for user display (w, x, y, z order, zero-rotation is [1, 0, 0, 0], send [0, 0, 0, 0] if not supported)</field>
     </message>
-    -->
     <!-- ATTITUDE_QUATERNION 已合并到 px4_custom.xml 中的 ATTITUDE (30) -->
-    <!--
+    
     <message id="31" name="ATTITUDE_QUATERNION">
       <description>The attitude in the aeronautical frame (right-handed, Z-down, X-front, Y-right), expressed as quaternion. Quaternion order is w, x, y, z and a zero rotation would be expressed as (1 0 0 0).</description>
       <field type="uint32_t" name="time_boot_ms" units="ms">Timestamp (time since system boot).</field>
@@ -5477,7 +5474,7 @@
       <extensions/>
       <field type="float[4]" name="repr_offset_q" invalid="[0]">Rotation offset by which the attitude quaternion and angular speed vector should be rotated for user display (quaternion with [w, x, y, z] order, zero-rotation is [1, 0, 0, 0], send [0, 0, 0, 0] if field not supported). This field is intended for systems in which the reference attitude may change during flight. For example, tailsitters VTOLs rotate their reference attitude by 90 degrees between hover mode and fixed wing mode, thus repr_offset_q is equal to [1, 0, 0, 0] in hover mode and equal to [0.7071, 0, 0.7071, 0] in fixed wing mode.</field>
     </message>
-    -->
+   
     <message id="32" name="LOCAL_POSITION_NED">
       <description>The filtered local position (e.g. fused computer vision and accelerometers). Coordinate frame is right-handed, Z-axis down (aeronautical frame, NED / north-east-down convention)</description>
       <field type="uint32_t" name="time_boot_ms" units="ms">Timestamp (time since system boot).</field>
@@ -5602,7 +5599,7 @@
       <field type="uint16_t" name="seq">Sequence</field>
     </message>
     <!-- MISSION_CURRENT seq 字段已整合到 px4_custom.xml 的 VFR_HUD 中 -->
-    <!--
+    
     <message id="42" name="MISSION_CURRENT">
       <description>
         Message that announces the sequence number of the current target mission item (that the system will fly towards/execute when the mission is running).
@@ -5618,7 +5615,7 @@
       <field type="uint32_t" name="fence_id" invalid="0">Id of current on-vehicle fence plan, or 0 if IDs are not supported or there is no fence loaded. GCS can use this to track changes to the fence plan type. The same value is returned on fence upload (in the MISSION_ACK).</field>
       <field type="uint32_t" name="rally_points_id" invalid="0">Id of current on-vehicle rally point plan, or 0 if IDs are not supported or there are no rally points loaded. GCS can use this to track changes to the rally point plan type. The same value is returned on rally point upload (in the MISSION_ACK).</field>
     </message>
-    -->
+   
     <message id="43" name="MISSION_REQUEST_LIST">
       <description>Request the overall list of mission items from the system/component.</description>
       <field type="uint8_t" name="target_system">System ID</field>
@@ -5626,22 +5623,22 @@
       <extensions/>
       <field type="uint8_t" name="mission_type" enum="MAV_MISSION_TYPE">Mission type.</field>
     </message>
-    <!-- MISSION_COUNT消息已挪到px4_custom.xml中 -->
-    <!-- <message id="44" name="MISSION_COUNT">
+    <!-- 删除opaque_id字段 -->
+    <message id="44" name="MISSION_COUNT">
       <description>This message is emitted as response to MISSION_REQUEST_LIST by the MAV and to initiate a write transaction. The GCS can then request the individual mission item based on the knowledge of the total number of waypoints.</description>
       <field type="uint8_t" name="target_system">System ID</field>
       <field type="uint8_t" name="target_component">Component ID</field>
       <field type="uint16_t" name="count">Number of mission items in the sequence</field>
       <extensions/>
       <field type="uint8_t" name="mission_type" enum="MAV_MISSION_TYPE">Mission type.</field>
-      <field type="uint32_t" name="opaque_id" invalid="0">Id of current on-vehicle mission, fence, or rally point plan (on download from vehicle).
+      <!-- <field type="uint32_t" name="opaque_id" invalid="0">Id of current on-vehicle mission, fence, or rally point plan (on download from vehicle).
         This field is used when downloading a plan from a vehicle to a GCS.
         0 on upload to the vehicle from GCS.
         0 if plan ids are not supported.
         The current on-vehicle plan ids are streamed in `MISSION_CURRENT`, allowing a GCS to determine if any part of the plan has changed and needs to be re-uploaded.
         The ids are recalculated by the vehicle when any part of the on-vehicle plan changes (when a new plan is uploaded, the vehicle returns the new id to the GCS in MISSION_ACK).
-      </field>
-    </message> -->
+      </field> -->
+    </message>
     <message id="45" name="MISSION_CLEAR_ALL">
       <description>Delete all mission items at once.</description>
       <field type="uint8_t" name="target_system">System ID</field>
@@ -5653,22 +5650,22 @@
       <description>A certain mission item has been reached. The system will either hold this position (or circle on the orbit) or (if the autocontinue on the WP was set) continue to the next waypoint.</description>
       <field type="uint16_t" name="seq">Sequence</field>
     </message>
-    <!-- MISSION_ACK消息已挪到px4_custom.xml中 -->
-    <!-- <message id="47" name="MISSION_ACK">
+    <!-- 删除opaque_id字段 -->
+    <message id="47" name="MISSION_ACK">
       <description>Acknowledgment message during waypoint handling. The type field states if this message is a positive ack (type=0) or if an error happened (type=non-zero).</description>
       <field type="uint8_t" name="target_system">System ID</field>
       <field type="uint8_t" name="target_component">Component ID</field>
       <field type="uint8_t" name="type" enum="MAV_MISSION_RESULT">Mission result.</field>
       <extensions/>
       <field type="uint8_t" name="mission_type" enum="MAV_MISSION_TYPE">Mission type.</field>
-      <field type="uint32_t" name="opaque_id" invalid="0">Id of new on-vehicle mission, fence, or rally point plan (on upload to vehicle).
+      <!-- <field type="uint32_t" name="opaque_id" invalid="0">Id of new on-vehicle mission, fence, or rally point plan (on upload to vehicle).
         The id is calculated and returned by a vehicle when a new plan is uploaded by a GCS.
         The only requirement on the id is that it must change when there is any change to the on-vehicle plan type (there is no requirement that the id be globally unique).
         0 on download from the vehicle to the GCS (on download the ID is set in MISSION_COUNT).
         0 if plan ids are not supported.
         The current on-vehicle plan ids are streamed in `MISSION_CURRENT`, allowing a GCS to determine if any part of the plan has changed and needs to be re-uploaded.
-      </field>
-    </message> -->
+      </field> -->
+    </message>
     <message id="48" name="SET_GPS_GLOBAL_ORIGIN">
       <deprecated since="2025-04" replaced_by="MAV_CMD_DO_SET_GLOBAL_ORIGIN"/>
       <description>Sets the GPS coordinates of the vehicle local origin (0,0,0) position. Vehicle should emit GPS_GLOBAL_ORIGIN irrespective of whether the origin is changed. This enables transform between the local coordinate frame and the global (GPS) coordinate frame, which may be necessary when (for example) indoor and outdoor settings are connected and the MAV should move from in- to outdoor.</description>
@@ -5699,15 +5696,14 @@
       <field type="float" name="param_value_min">Minimum param value. The protocol does not define if this overwrites an onboard minimum value. (Depends on implementation)</field>
       <field type="float" name="param_value_max">Maximum param value. The protocol does not define if this overwrites an onboard maximum value. (Depends on implementation)</field>
     </message>
-    <!-- MISSION_REQUEST_INT消息已挪到px4_custom.xml中 -->
-    <!-- <message id="51" name="MISSION_REQUEST_INT">
+    <message id="51" name="MISSION_REQUEST_INT">
       <description>Request the information of the mission item with the sequence number seq. The response of the system to this message should be a MISSION_ITEM_INT message. https://mavlink.io/en/services/mission.html</description>
       <field type="uint8_t" name="target_system">System ID</field>
       <field type="uint8_t" name="target_component">Component ID</field>
       <field type="uint16_t" name="seq">Sequence</field>
       <extensions/>
       <field type="uint8_t" name="mission_type" enum="MAV_MISSION_TYPE">Mission type.</field>
-    </message> -->
+    </message>
     <!-- Note, id 53 reserved for MISSION_CHECKSUM message (development.xml) -->
     <message id="54" name="SAFETY_SET_ALLOWED_AREA">
       <description>Set a safety zone (volume), which is defined by two corners of a cube. This message can be used to tell the MAV which setpoints/waypoints to accept and which to reject. Safety areas are often enforced by national or competition regulations.</description>
@@ -5740,20 +5736,26 @@
       <field type="float" name="yawspeed" units="rad/s">Yaw angular speed</field>
       <field type="float[9]" name="covariance" invalid="[NaN:]">Row-major representation of a 3x3 attitude covariance matrix (states: roll, pitch, yaw; first three entries are the first ROW, next three entries are the second row, etc.). If unknown, assign NaN value to first element in the array.</field>
     </message>
-    <!-- NAV_CONTROLLER_OUTPUT 已在 px4_custom.xml 中重新定义,扩展为 10 字段版本 -->
-    <!--
+    <!-- 重新定义 NAV_CONTROLLER_OUTPUT 消息,简化为 10 字段版本 -->
     <message id="62" name="NAV_CONTROLLER_OUTPUT">
-      <description>The state of the navigation and position controller.</description>
+      <description>Simplified navigation and position controller state for PX4. Includes desired attitude, position errors, and target position.</description>
+
+      <!-- 姿态和导航 -->
       <field type="float" name="nav_roll" units="deg">Current desired roll</field>
       <field type="float" name="nav_pitch" units="deg">Current desired pitch</field>
       <field type="int16_t" name="nav_bearing" units="deg">Current desired heading</field>
       <field type="int16_t" name="target_bearing" units="deg">Bearing to current waypoint/target</field>
       <field type="uint16_t" name="wp_dist" units="m">Distance to active waypoint</field>
-      <field type="float" name="alt_error" units="m">Current altitude error</field>
-      <field type="float" name="aspd_error" units="m/s">Current airspeed error</field>
-      <field type="float" name="xtrack_error" units="m">Current crosstrack error on x-y plane</field>
+
+      <!-- 目标速度和高度 -->
+      <field type="float" name="target_speed" units="m/s">Current desired target speed</field>
+      <field type="float" name="target_alt_rel" units="m">Current desired target altitude relative to takeoff point</field>
+
+      <!-- 目标位置 (移除 xtrack_error, 添加 lat) -->
+      <field type="int32_t" name="lat" units="degE7">Current desired latitude</field>
+      <field type="int32_t" name="lon" units="degE7">Current desired longitude</field>
+      <field type="int32_t" name="alt" units="mm">Current desired altitude above MSL (Mean Sea Level)</field>
     </message>
-    -->
     <message id="63" name="GLOBAL_POSITION_INT_COV">
       <description>The filtered global position (e.g. fused GPS and accelerometers). The position is in GPS-frame (right-handed, Z-up). It  is designed as scaled integer message since the resolution of float is not sufficient. NOTE: This message is intended for onboard networks / companion computers and higher-bandwidth links and optimized for accuracy and completeness. Please use the GLOBAL_POSITION_INT message for a minimal subset.</description>
       <field type="uint64_t" name="time_usec" units="us">Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.</field>
@@ -5782,8 +5784,7 @@
       <field type="float" name="az" units="m/s/s">Z Acceleration</field>
       <field type="float[45]" name="covariance" invalid="[NaN:]">Row-major representation of position, velocity and acceleration 9x9 cross-covariance matrix upper right triangle (states: x, y, z, vx, vy, vz, ax, ay, az; first nine entries are the first ROW, next eight entries are the second row, etc.). If unknown, assign NaN value to first element in the array.</field>
     </message>
-    <!-- RC_CHANNELS消息已挪到px4_custom.xml中 -->
-    <!-- <message id="65" name="RC_CHANNELS">
+    <message id="65" name="RC_CHANNELS">
       <description>The PPM values of the RC channels received. The standard PPM modulation is as follows: 1000 microseconds: 0%, 2000 microseconds: 100%.  A value of UINT16_MAX implies the channel is unused. Individual receivers/transmitters might violate this specification.</description>
       <field type="uint32_t" name="time_boot_ms" units="ms">Timestamp (time since system boot).</field>
       <field type="uint8_t" name="chancount">Total number of RC channels being received. This can be larger than 18, indicating that more channels are available but not given in this message. This value should be 0 when no RC channels are available.</field>
@@ -5806,7 +5807,7 @@
       <field type="uint16_t" name="chan17_raw" units="us" invalid="UINT16_MAX">RC channel 17 value.</field>
       <field type="uint16_t" name="chan18_raw" units="us" invalid="UINT16_MAX">RC channel 18 value.</field>
       <field type="uint8_t" name="rssi" invalid="UINT8_MAX">Receive signal strength indicator in device-dependent units/scale. Values: [0-254], UINT8_MAX: invalid/unknown.</field>
-    </message> -->
+    </message>
     <message id="66" name="REQUEST_DATA_STREAM">
       <deprecated since="2015-08" replaced_by="MAV_CMD_SET_MESSAGE_INTERVAL "/>
       <description>Request a data stream.</description>
@@ -5868,8 +5869,7 @@
       <field type="uint16_t" name="chan17_raw" units="us" invalid="0">RC channel 17 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.</field>
       <field type="uint16_t" name="chan18_raw" units="us" invalid="0">RC channel 18 value. A value of 0 or UINT16_MAX means to ignore this field. A value of UINT16_MAX-1 means to release this channel back to the RC radio.</field>
     </message>
-    <!-- MISSION_ITEM_INT消息已挪到px4_custom.xml中 -->
-    <!-- <message id="73" name="MISSION_ITEM_INT">
+    <message id="73" name="MISSION_ITEM_INT">
       <description>Message encoding a mission item. This message is emitted to announce
                 the presence of a mission item and to set a mission item on the system. The mission item can be either in x, y, z meters (type: LOCAL) or x:lat, y:lon, z:altitude. Local frame is Z-down, right handed (NED), global frame is Z-up, right handed (ENU). NaN or INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current latitude, yaw rather than a specific value). See also https://mavlink.io/en/services/mission.html.</description>
       <field type="uint8_t" name="target_system">System ID</field>
@@ -5888,19 +5888,29 @@
       <field type="float" name="z">PARAM7 / z position: global: altitude in meters (relative or absolute, depending on frame.</field>
       <extensions/>
       <field type="uint8_t" name="mission_type" enum="MAV_MISSION_TYPE">Mission type.</field>
-    </message> -->
-    <!-- VFR_HUD 已在 px4_custom.xml 中重新定义 -->
-    <!--
-    <message id="74" name="VFR_HUD">
-      <description>Metrics typically displayed on a HUD for fixed wing aircraft.</description>
-      <field type="float" name="airspeed" units="m/s">Vehicle speed in form appropriate for vehicle type. For standard aircraft this is typically calibrated airspeed (CAS) or indicated airspeed (IAS) - either of which can be used by a pilot to estimate stall speed.</field>
-      <field type="float" name="groundspeed" units="m/s">Current ground speed.</field>
-      <field type="int16_t" name="heading" units="deg">Current heading in compass units (0-360, 0=north).</field>
-      <field type="uint16_t" name="throttle" units="%">Current throttle setting (0 to 100).</field>
-      <field type="float" name="alt" units="m">Current altitude (MSL).</field>
-      <field type="float" name="climb" units="m/s">Current climb rate.</field>
     </message>
-    -->
+    <!-- 重新定义 VFR_HUD 消息,整合来自多个原始消息的字段 -->
+    <message id="74" name="VFR_HUD">
+      <description>Simplified VFR HUD data integrating fields from VFR_HUD (74), GLOBAL_POSITION_INT (33), WIND_COV (231), and MISSION_CURRENT (42) for PX4</description>
+
+      <!-- 来自原始 VFR_HUD (74) 的 5 个字段 -->
+      <field type="float" name="airspeed" units="m/s">Vehicle speed (CAS/IAS for fixed-wing, groundspeed for multirotor)</field>
+      <field type="float" name="groundspeed" units="m/s">Current ground speed</field>
+      <field type="int16_t" name="heading" units="deg">Current heading (0-360, 0=north)</field>
+      <field type="uint16_t" name="throttle" units="%">Current throttle setting (0 to 100)</field>
+      <field type="float" name="climb" units="m/s">Current climb rate</field>
+
+      <!-- 来自 GLOBAL_POSITION_INT (33) -->
+      <field type="int32_t" name="relative_alt" units="mm">Altitude above home</field>
+
+      <!-- 来自 WIND_COV (231) 的 3 个风速字段 -->
+      <field type="float" name="wind_x" units="m/s" invalid="NaN">Wind in North (NED) direction</field>
+      <field type="float" name="wind_y" units="m/s" invalid="NaN">Wind in East (NED) direction</field>
+      <field type="float" name="wind_z" units="m/s" invalid="NaN">Wind in down (NED) direction</field>
+
+      <!-- 来自 MISSION_CURRENT (42) -->
+      <field type="uint16_t" name="seq">Current mission sequence number</field>
+    </message>
     <message id="75" name="COMMAND_INT">
       <description>Send a command with up to seven parameters to the MAV, where params 5 and 6 are integers and the other values are floats. This is preferred over COMMAND_LONG as it allows the MAV_FRAME to be specified for interpreting positional information, such as altitude. COMMAND_INT is also preferred when sending latitude and longitude data in params 5 and 6, as it allows for greater precision. Param 5 and 6 encode positional data as scaled integers, where the scaling depends on the actual command value. NaN or INT32_MAX may be used in float/integer params (respectively) to indicate optional/default values (e.g. to use the component's current latitude, yaw rather than a specific value). The command microservice is documented at https://mavlink.io/en/services/command.html</description>
       <field type="uint8_t" name="target_system">System ID</field>
@@ -6666,27 +6676,18 @@
       <field type="float" name="pitch_rate" units="rad/s">Angular rate in pitch axis</field>
       <field type="float" name="yaw_rate" units="rad/s">Angular rate in yaw axis</field>
     </message>
-    <!-- BATTERY_STATUS 已在 px4_custom.xml 中重新定义，简化为 6 字段 -->
-    <!--
+    <!-- 重新定义 BATTERY_STATUS 消息,简化为 6 字段版本 -->
     <message id="147" name="BATTERY_STATUS">
-      <description>Battery information. Updates GCS with flight controller battery status. Smart batteries also use this message, but may additionally send BATTERY_INFO.</description>
+      <description>Simplified battery information for PX4. Contains only essential battery status fields.</description>
+
+      <!-- 基础字段 -->
       <field type="uint8_t" name="id" instance="true">Battery ID</field>
-      <field type="uint8_t" name="battery_function" enum="MAV_BATTERY_FUNCTION">Function of the battery</field>
-      <field type="uint8_t" name="type" enum="MAV_BATTERY_TYPE">Type (chemistry) of the battery</field>
-      <field type="int16_t" name="temperature" units="cdegC" invalid="INT16_MAX">Temperature of the battery. INT16_MAX for unknown temperature.</field>
       <field type="uint16_t[10]" name="voltages" units="mV" invalid="[UINT16_MAX]">Battery voltage of cells 1 to 10 (see voltages_ext for cells 11-14). Cells in this field above the valid cell count for this battery should have the UINT16_MAX value. If individual cell voltages are unknown or not measured for this battery, then the overall battery voltage should be filled in cell 0, with all others set to UINT16_MAX. If the voltage of the battery is greater than (UINT16_MAX - 1), then cell 0 should be set to (UINT16_MAX - 1), and cell 1 to the remaining voltage. This can be extended to multiple cells if the total voltage is greater than 2 * (UINT16_MAX - 1).</field>
       <field type="int16_t" name="current_battery" units="cA" invalid="-1">Battery current, -1: autopilot does not measure the current</field>
-      <field type="int32_t" name="current_consumed" units="mAh" invalid="-1">Consumed charge, -1: autopilot does not provide consumption estimate</field>
-      <field type="int32_t" name="energy_consumed" units="hJ" invalid="-1">Consumed energy, -1: autopilot does not provide energy consumption estimate</field>
       <field type="int8_t" name="battery_remaining" units="%" invalid="-1">Remaining battery energy. Values: [0-100], -1: autopilot does not estimate the remaining battery.</field>
-      <extensions/>
       <field type="int32_t" name="time_remaining" units="s" invalid="0">Remaining battery time, 0: autopilot does not provide remaining battery time estimate</field>
       <field type="uint8_t" name="charge_state" enum="MAV_BATTERY_CHARGE_STATE">State for extent of discharge, provided by autopilot for warning or external reactions</field>
-      <field type="uint16_t[4]" name="voltages_ext" units="mV" invalid="[0]">Battery voltages for cells 11 to 14. Cells above the valid cell count for this battery should have a value of 0, where zero indicates not supported (note, this is different than for the voltages field and allows empty byte truncation). If the measured value is 0 then 1 should be sent instead.</field>
-      <field type="uint8_t" name="mode" enum="MAV_BATTERY_MODE">Battery mode. Default (0) is that battery mode reporting is not supported or battery is in normal-use mode.</field>
-      <field type="uint32_t" name="fault_bitmask" enum="MAV_BATTERY_FAULT">Fault/health indications. These should be set when charge_state is MAV_BATTERY_CHARGE_STATE_FAILED or MAV_BATTERY_CHARGE_STATE_UNHEALTHY (if not, fault reporting is not supported).</field>
     </message>
-    -->
     <!-- <message id="148" name="AUTOPILOT_VERSION"> in standard.xml -->
     <message id="149" name="LANDING_TARGET">
       <description>The location of a landing target. See: https://mavlink.io/en/services/landing_target.html</description>
@@ -6779,7 +6780,7 @@
       <field type="float" name="pos_vert_accuracy" units="m">Vertical position 1-STD accuracy relative to the EKF local origin</field>
     </message>
     <!-- WIND_COV 字段已整合到 px4_custom.xml 的 VFR_HUD 中 -->
-    <!--
+    
     <message id="231" name="WIND_COV">
       <description>Wind estimate from vehicle. Note that despite the name, this message does not actually contain any covariances but instead variability and accuracy fields in terms of standard deviation (1-STD).</description>
       <field type="uint64_t" name="time_usec" units="us">Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.</field>
@@ -6792,7 +6793,7 @@
       <field type="float" name="horiz_accuracy" units="m/s" invalid="0">Horizontal speed 1-STD accuracy (0 if unknown)</field>
       <field type="float" name="vert_accuracy" units="m/s" invalid="0">Vertical speed 1-STD accuracy (0 if unknown)</field>
     </message>
-    -->
+   
     <message id="232" name="GPS_INPUT">
       <description>GPS sensor input message.  This is a raw sensor value sent by the GPS. This is NOT the global position estimate of the system.</description>
       <field type="uint64_t" name="time_usec" units="us">Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.</field>
@@ -6890,36 +6891,14 @@
       <field type="uint32_t" name="clipping_1">second accelerometer clipping count</field>
       <field type="uint32_t" name="clipping_2">third accelerometer clipping count</field>
     </message>
-    <!-- HOME_POSITION 已在 px4_custom.xml 中重新定义,简化为 3 字段版本 -->
-    <!--
+    <!-- 重新定义 HOME_POSITION 消息,简化为 3 字段版本 -->
     <message id="242" name="HOME_POSITION">
-      <description>
-	Contains the home position.
-	The home position is the default position that the system will return to and land on.
-	The position must be set automatically by the system during the takeoff, and may also be explicitly set using MAV_CMD_DO_SET_HOME.
-	The global and local positions encode the position in the respective coordinate frames, while the q parameter encodes the orientation of the surface.
-	Under normal conditions it describes the heading and terrain slope, which can be used by the aircraft to adjust the approach.
-	The approach 3D vector describes the point to which the system should fly in normal flight mode and then perform a landing sequence along the vector.
-        Note: this message can be requested by sending the MAV_CMD_REQUEST_MESSAGE with param1=242 (or the deprecated MAV_CMD_GET_HOME_POSITION command).
-      </description>
+      <description>Simplified home position for PX4. Contains only the essential GPS coordinates.</description>
+
       <field type="int32_t" name="latitude" units="degE7">Latitude (WGS84)</field>
       <field type="int32_t" name="longitude" units="degE7">Longitude (WGS84)</field>
       <field type="int32_t" name="altitude" units="mm">Altitude (MSL). Positive for up.</field>
-      <field type="float" name="x" units="m">Local X position of this position in the local coordinate frame (NED)</field>
-      <field type="float" name="y" units="m">Local Y position of this position in the local coordinate frame (NED)</field>
-      <field type="float" name="z" units="m">Local Z position of this position in the local coordinate frame (NED: positive "down")</field>
-      <field type="float[4]" name="q" invalid="[NaN]">
-        Quaternion indicating world-to-surface-normal and heading transformation of the takeoff position.
-        Used to indicate the heading and slope of the ground.
-        All fields should be set to NaN if an accurate quaternion for both heading and surface slope cannot be supplied.
-      </field>
-      <field type="float" name="approach_x" units="m">Local X position of the end of the approach vector. Multicopters should set this position based on their takeoff path. Grass-landing fixed wing aircraft should set it the same way as multicopters. Runway-landing fixed wing aircraft should set it to the opposite direction of the takeoff, assuming the takeoff happened from the threshold / touchdown zone.</field>
-      <field type="float" name="approach_y" units="m">Local Y position of the end of the approach vector. Multicopters should set this position based on their takeoff path. Grass-landing fixed wing aircraft should set it the same way as multicopters. Runway-landing fixed wing aircraft should set it to the opposite direction of the takeoff, assuming the takeoff happened from the threshold / touchdown zone.</field>
-      <field type="float" name="approach_z" units="m">Local Z position of the end of the approach vector. Multicopters should set this position based on their takeoff path. Grass-landing fixed wing aircraft should set it the same way as multicopters. Runway-landing fixed wing aircraft should set it to the opposite direction of the takeoff, assuming the takeoff happened from the threshold / touchdown zone.</field>
-      <extensions/>
-      <field type="uint64_t" name="time_usec" units="us">Timestamp (UNIX Epoch time or time since system boot). The receiving end can infer timestamp format (since 1.1.1970 or since system boot) by checking for the magnitude of the number.</field>
     </message>
-    -->
     <message id="243" name="SET_HOME_POSITION">
       <deprecated since="2022-02" replaced_by="MAV_CMD_DO_SET_HOME">The command protocol version (MAV_CMD_DO_SET_HOME) allows a GCS to detect when setting the home position has failed.</deprecated>
       <description>
@@ -7020,15 +6999,14 @@
       <field type="char[10]" name="name" instance="true">Name of the debug variable</field>
       <field type="int32_t" name="value">Signed integer value</field>
     </message>
-    <!-- STATUSTEXT消息已挪到px4_custom.xml中 -->
-    <!-- <message id="253" name="STATUSTEXT">
+    <message id="253" name="STATUSTEXT">
       <description>Status text message. These messages are printed in yellow in the COMM console of QGroundControl. WARNING: They consume quite some bandwidth, so use only for important status and error messages. If implemented wisely, these messages are buffered on the MCU and sent only at a limited rate (e.g. 10 Hz).</description>
       <field type="uint8_t" name="severity" enum="MAV_SEVERITY">Severity of status. Relies on the definitions within RFC-5424.</field>
       <field type="char[50]" name="text">Status text message, without null termination character</field>
       <extensions/>
       <field type="uint16_t" name="id">Unique (opaque) identifier for this statustext message.  May be used to reassemble a logical long-statustext message from a sequence of chunks.  A value of zero indicates this is the only chunk in the sequence and the message can be emitted immediately.</field>
       <field type="uint8_t" name="chunk_seq">This chunk's sequence number; indexing is from zero.  Any null character in the text field is taken to mean this was the last chunk.</field>
-    </message> -->
+    </message>
     <message id="254" name="DEBUG">
       <description>Send a debug value. The index is used to discriminate between values. These values show up in the plot of QGroundControl as DEBUG N.</description>
       <field type="uint32_t" name="time_boot_ms" units="ms">Timestamp (time since system boot).</field>
@@ -7161,8 +7139,7 @@
       <extensions/>
       <field type="float" name="yaw_absolute" units="deg" invalid="NaN">Yaw in absolute frame relative to Earth's North, north is 0 (set to NaN for invalid).</field>
     </message>
-    <!-- LOGGING_DATA消息已挪到px4_custom.xml中 -->
-    <!-- <message id="266" name="LOGGING_DATA">
+    <message id="266" name="LOGGING_DATA">
       <description>A message containing logged data (see also MAV_CMD_LOGGING_START)</description>
       <field type="uint8_t" name="target_system">system ID of the target</field>
       <field type="uint8_t" name="target_component">component ID of the target</field>
@@ -7170,7 +7147,7 @@
       <field type="uint8_t" name="length" units="bytes">data length</field>
       <field type="uint8_t" name="first_message_offset" units="bytes" invalid="UINT8_MAX">offset into data where first message starts. This can be used for recovery, when a previous message got lost (set to UINT8_MAX if no start exists).</field>
       <field type="uint8_t[249]" name="data">logged data</field>
-    </message> -->
+    </message>
     <message id="267" name="LOGGING_DATA_ACKED">
       <description>A message containing logged data which requires a LOGGING_ACK to be sent back</description>
       <field type="uint8_t" name="target_system">system ID of the target</field>
@@ -8096,12 +8073,11 @@
       <field type="uint8_t[225]" name="messages">Concatenation of encoded OpenDroneID messages. Shall be filled with nulls in the unused portion of the field.</field>
     </message>
     <!-- The message ids 12916 - 12917 are reserved for OpenDroneID. -->
-    <!-- OPEN_DRONE_ID_ARM_STATUS消息已挪到px4_custom.xml中 -->
-    <!-- <message id="12918" name="OPEN_DRONE_ID_ARM_STATUS">
+    <message id="12918" name="OPEN_DRONE_ID_ARM_STATUS">
       <description>Transmitter (remote ID system) is enabled and ready to start sending location and other required information. This is streamed by transmitter. A flight controller uses it as a condition to arm.</description>
       <field type="uint8_t" name="status" enum="MAV_ODID_ARM_STATUS">Status level indicating if arming is allowed.</field>
       <field type="char[50]" name="error">Text error message, should be empty if status is good to arm. Fill with nulls in unused portion.</field>
-    </message> -->
+    </message>
     <message id="12919" name="OPEN_DRONE_ID_SYSTEM_UPDATE">
       <description>Update the data in the OPEN_DRONE_ID_SYSTEM message with new location information. This can be sent to update the location information for the operator when no other information in the SYSTEM message has changed. This message allows for efficient operation on radio links which have limited uplink bandwidth while meeting requirements for update frequency of the operator location.</description>
       <field type="uint8_t" name="target_system">System ID (0 for broadcast).</field>
